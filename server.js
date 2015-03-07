@@ -6,8 +6,16 @@ client
     .on('connect', function()
     {
 		client.use("xposl", function(err, tubename) {
-			console.log(currency);
-			//TODO:
+			currency.getRate({
+				from: 'hkd',
+				to: 'rmb',
+				success: function(res) {
+					console.log(res);
+				},
+				error: function(res) {
+					console.log(res);
+				}
+			});
 		});
 		console.log("client can now be used");
     })
