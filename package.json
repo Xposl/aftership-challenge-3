@@ -1,0 +1,11 @@
+{
+	"name": "aftership_challenge_3",
+	"version": "0.1.0",
+	"bin": {
+		"worker": "bin/worker.js"
+	},
+	"description": "The code test for AfterShip application.",
+	"dependencies": {
+		"fivebeans": "1.1.1"
+	}
+}
