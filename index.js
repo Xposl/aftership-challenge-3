@@ -1,7 +1,11 @@
 /**
+ * start worker fo aftership challenge
+ * author: windrainsky@gmail.com
  */
 
-//var test = require('./lib/test/connect_test');
-var worker = require('./lib/worker');
+var configs = require('./config/configs'),
+	worker = require('./lib/worker');
 
-worker.start();
+
+worker.start(configs);
+
