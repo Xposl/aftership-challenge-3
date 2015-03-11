@@ -4,7 +4,7 @@
  */
 
 var configs = require('./config/configs'),
-	worker = require('./lib/worker');
+	worker = require('./bin/worker');
 
 
 worker.start(configs);

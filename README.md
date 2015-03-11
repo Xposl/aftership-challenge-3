@@ -20,61 +20,124 @@ Code a currency exchagne rate `worker`
 #### The worker should:
 Scale horizontally (can run in more than 1 process in many different machines)
 
-## How it work?
+## How to run this worker?
 ---
 
-1. Seed your job in beanstalkd, tube_name = your_github_username
+1. Seed my job in beanstalkd. here I use tube_name = 'xposl'
 
-##### Sample beanstalk payload for getting HKD to USD currency, you can use any format or content to fit your need.
-```
-{
-  "from": "HKD",
-  "to": "USD"
-}
-```
-
-2. Code a nodejs worker, get the job from beanstalkd, get the data from xe.com and save it to mongodb. Exchange rate need to be round off to `2` decmicals in `STRING` type.
+2. I had Code a nodejs worker, get the job from beanstalkd, get the data from xe.com and save it to mongodb. Exchange rate need to be round off to `2` decmicals in `STRING` type.
 	
 	a. If request fail, reput to the tube and delay with 3s.
 
 	b. If request is done, reput to the tube and delay with 60s.
 
-##### mongodb data:
+#### I had write a settings file in config/configs.js to set the config of this worker, please make sure the config is right to your system
+  module.exports = {
+	beanTalk: {
+	  host: [the aftership beanstalk host],
+
+     	//the port of this server
+		port: 11300,
+
+		//the tubes list in this worker
+		tubes: ['xposl']
+
+	},
+
+	handlers: {
+		currency_rate:	{
+			mongodb: {
+			
+				//the mongodb server I had to save the result
+				url: 'mongodb://aftership:123123@ds029960.mongolab.com:29960/aftership_challenge',
+				collection: 'currency'
+			},
+			success: {
+				//how may time will try if the request success, here is 10
+				time: 10,
+
+				//when will the next request start if success this time, here means 10 sec
+				delay: 10
+			},
+			failed: {
+				//how may time will try if the request failed
+				time: 3,
+				//when will the next request start if failed this time, here means 3 sec
+				delay: 3
+			}
+		}
+	}
+};
+
+3. run the work use command 'node index' in the root folder of this project
+
+There will display some information like
+
+####
+```
+  worker init
+  worker start
+
+```
+Now add a new job with the payload data like
+##### beanstalk payload for getting HKD to USD currency, because use fivebeans worker to finish it the payload now use:
 ```
 {
-	"from": "HKD",
-	"to": "USD",
-	"created_at": new Date(1347772624825),
-	"rate": "0.13"
+  "type" : "currency_rate",
+  "payload" : [
+    {
+      "from": "HKD",
+      "to": "USD"
+    },
+	{
+      "from": "HKD",
+      "to": "AUD"
+    }
+  ]
 }
 
 ```
 
-3. Stop the task if you tried 10 succeed attempt or 3 failed attempt.
+The command window will display:
+#### Send a new request
+```
+new request
+get result of  { from: 'HKD', to: 'AUD' }
+get result of  { from: 'HKD', to: 'USD' }
+the result is  { from: 'HKD',
+  to: 'AUD',
+  create_at: Wed Mar 11 2015 19:56:28 GMT+0800 (CST),
+  value: '0.13',
+  error: 0,
+  message: 'success' }
+the result is  { from: 'HKD',
+  to: 'USD',
+  create_at: Wed Mar 11 2015 19:56:28 GMT+0800 (CST),
+  value: '0.13',
+  error: 0,
+  message: 'success' }
+Request Success 1
+Data save successful!
 
-4. NOTICE that the above bs payload is just an example, you should make sure your script can be run as `distributed` system (multiple instances, multi process), and also able to get MULTIPLE currenies if needed. Not only HKD to USD.
-
-5. You are coding the `consumer` worker, NEVER use your worker to seed the data. 
+```
 
 
+After the task finish, the success result will be store in the mongodb database like
+##### mongodb data:
+```
+{
+    "_id": {
+        "$oid": "550020edcee03fc211818eb0"
+    },
+    "from": "HKD",
+    "to": "USD",
+    "create_at": {
+        "$date": "2015-03-11T11:03:06.839Z"
+    },
+    "value": "0.13",
+    "error": 0,
+    "message": "success"
+}
+```
 
-## Tools you need
----
-1. beanstalkd server is setup for you already, make a JSON request to this:
 
-	/POST http://challenge.aftership.net:9578/v1/beanstalkd
-	
-	header: aftership-api-key: a6403a2b-af21-47c5-aab5-a2420d20bbec
-
-2. Get a free mongodb server at [mongolab](https://mongolab.com/welcome/)
-
-3. You should need [fivebeans](https://github.com/ceejbot/fivebeans) npm or any tools u like.
-
-4. You may also need [Beanstalk console](https://github.com/ptrofimov/beanstalk_console) or any tools u like.
-
-5. Our [cook book](https://github.com/AfterShip/coding-guideline-javascript)
-
-
-## Help?
----
-am9ic0BhZnRlcnNoaXAuY29t
