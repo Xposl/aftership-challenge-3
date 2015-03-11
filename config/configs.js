@@ -22,7 +22,7 @@ module.exports = {
 			},
 			success: {
 				//how may time will try if the request success
-				time: 3,
+				time: 10,
 
 				//when will the next request start if success this time
 				delay: 10
