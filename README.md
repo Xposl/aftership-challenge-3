@@ -117,9 +117,30 @@ the result is  { from: 'HKD',
   message: 'success' }
 Request Success 1
 Data save successful!
+Data save successful!
+```
+
+And to some failed test I use 
+```
+{
+  "type" : "currency_rate",
+  "payload" : [
+    {
+      "from": "HKD",
+      "to": "aaa"
+    }
+  ]
+}
 
 ```
 
+the result is
+```
+get result of  { from: 'HKD', to: 'aaa' }
+failed!
+Request Failed 3
+
+```
 
 After the task finish, the success result will be store in the mongodb database like
 ##### mongodb data:
