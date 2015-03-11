@@ -31,7 +31,8 @@ Scale horizontally (can run in more than 1 process in many different machines)
 
 	b. If request is done, reput to the tube and delay with 60s.
 
-#### I had write a settings file in config/configs.js to set the config of this worker, please make sure the config is right to your system
+I had write a settings file in config/configs.js to set the config of this worker, please make sure the config is right to your system
+```
   module.exports = {
 	beanTalk: {
 	  host: [the aftership beanstalk host],
@@ -68,12 +69,11 @@ Scale horizontally (can run in more than 1 process in many different machines)
 		}
 	}
 };
-
+```
 3. run the work use command 'node index' in the root folder of this project
 
 There will display some information like
 
-####
 ```
   worker init
   worker start
@@ -99,7 +99,6 @@ Now add a new job with the payload data like
 ```
 
 The command window will display:
-#### Send a new request
 ```
 new request
 get result of  { from: 'HKD', to: 'AUD' }
